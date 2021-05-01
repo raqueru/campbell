@@ -5,8 +5,12 @@ using UnityEngine;
 public class PlayerMov : MonoBehaviour
 {
     private float x;
+    public int life = 100;
     public float JumpForce;
     public float MoveSpeed;
+    private bool grounded = false;
+    public AudioSource jumpsfx;
+    public GameObject end;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,12 +18,23 @@ public class PlayerMov : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Walk();
         Jump();
+        die();
     }
-
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.gameObject.tag == "Ground")
+        {
+            grounded = true;
+        }
+        if (col.gameObject.tag == "Enemy")
+        {
+            life -= 10;
+        }
+    }
     private void Walk()
     {
         x = Input.GetAxis("Horizontal");
@@ -28,10 +43,20 @@ public class PlayerMov : MonoBehaviour
     }
     private void Jump()
     {
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("space")&& grounded)
         {
             gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, JumpForce), ForceMode2D.Impulse);
+            grounded = false;
+            jumpsfx.Play();
         }
 
+    }
+    void die()
+    {
+        if (life <= 0)
+        {
+            Time.timeScale = 0;
+            end.gameObject.SetActive(true);
+        }
     }
 }
