@@ -12,10 +12,7 @@ public class PlayerMov : MonoBehaviour
     public AudioSource jumpsfx;
     public GameObject end;
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+ 
 
     // Update is called once per frame
     void FixedUpdate()
@@ -24,6 +21,8 @@ public class PlayerMov : MonoBehaviour
         Jump();
         die();
     }
+
+    
     private void OnCollisionStay2D(Collision2D col)
     {
         if (col.gameObject.tag == "Ground")
@@ -32,7 +31,10 @@ public class PlayerMov : MonoBehaviour
         }
         if (col.gameObject.tag == "Enemy")
         {
-            life -= 10;
+            if (!col.gameObject.GetComponent<enemy>().died)
+            {
+                life -= 10;
+            }
         }
     }
     private void Walk()
